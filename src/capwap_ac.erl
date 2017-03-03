@@ -1863,7 +1863,8 @@ init_wlan_information_elements(Radio, WlanState) ->
 	      {fun wlan_ht_opmode_ie/2, ProbeResponseFlags},
 	      {fun wlan_rsn_ie/2, ProbeResponseFlags},
 	      {fun wlan_ht_cap_ie/2, ProbeResponseFlags},
-	      {fun wlan_md_ie/2, ProbeResponseFlags}],
+	      {fun wlan_md_ie/2, ProbeResponseFlags},
+	      {fun wlan_time_zone_ie/2, ProbeResponseFlags}],
     lists:foldl(fun({Fun, Flags}, WS = #wlan{information_elements = IEs}) ->
 			case Fun(Radio, WS) of
 			    IE when is_binary(IE) ->
@@ -1947,6 +1948,9 @@ wlan_md_ie(_Radio, #wlan{fast_transition = true, mobility_domain = MDomain}) ->
     ieee_802_11_ie(?WLAN_EID_MOBILITY_DOMAIN, <<MDomain:16, 1>>);
 wlan_md_ie(_, _) ->
     undefined.
+
+wlan_time_zone_ie(_Radio, _WlanState) ->
+    ieee_802_11_ie(?WLAN_EID_TIME_ZONE, <<"CEST">>).
 
 wlan_cfg_tp_hold_time(#wtp_radio{radio_id = RadioId},
 		      #wlan{wlan_identifier = {_, WlanId}},
