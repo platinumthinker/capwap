@@ -607,6 +607,8 @@ run({ieee_802_11_wlan_configuration_response, _Seq, Elements, _Header},
 								bssid = BSS}, S0) ->
 				    update_wlan_state({RadioId, WlanId},
 						      fun(W = #wlan{vlan = VlanId}) ->
+							      %% TODO: include the Mobility Domain ?
+							      ok = capwap_wtp_reg:register(BSS),
 							      capwap_dp:add_wlan(WTPDataChannelAddress,
 										 RadioId, WlanId, BSS, VlanId),
 							      W#wlan{bss = BSS}
