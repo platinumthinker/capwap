@@ -127,6 +127,7 @@ request(Id, Type, Data) ->
 key(Flags, KeyData, #ccmp{mic_algo = MICAlgo,
 			  replay_counter = ReplayCounter,
 			  nonce = Nonce} = CCMP) ->
+    lager:info("CCMP KEY: ~p", [lager:pr(CCMP, ?MODULE)]),
     KeyInfo = lists:foldl(fun keyinfo/2, 0, Flags)
 	bor mic_algo(MICAlgo),
     KeyLen = key_len(CCMP),

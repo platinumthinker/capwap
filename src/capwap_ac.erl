@@ -588,6 +588,7 @@ run({ieee_802_11_wlan_configuration_response, _Seq, Elements, _Header},
 	case proplists:get_value(result_code, Elements) of
 	    0 ->
 		lager:debug("IEEE 802.11 WLAN Configuration ok for ~p", [CommonName]),
+		lager:info("BSSID: ~p", [get_ies(ieee_802_11_assigned_wtp_bssid, Elements)]),
 
 		BSSIdIEs = get_ies(ieee_802_11_assigned_wtp_bssid, Elements),
 		State1 = State0#state{config = Config#wtp{broken_add_wlan_workaround = (BSSIdIEs =:= [])}},
@@ -609,8 +610,9 @@ run({ieee_802_11_wlan_configuration_response, _Seq, Elements, _Header},
 						      fun(W = #wlan{vlan = VlanId}) ->
 							      %% TODO: include the Mobility Domain ?
 							      ok = capwap_wtp_reg:register(BSS),
-							      capwap_dp:add_wlan(WTPDataChannelAddress,
-										 RadioId, WlanId, BSS, VlanId),
+							      R = capwap_dp:add_wlan(WTPDataChannelAddress,
+										     RadioId, WlanId, BSS, VlanId),
+							      lager:info("CAPWAP DP Add WLAN: ~p", [R]),
 							      W#wlan{bss = BSS}
 						      end, S0)
 			    end, State1, BSSIdIEs);
@@ -1918,6 +1920,7 @@ rsn_ie(#wtp_wlan_rsn{version = RSNVersion,
 		     cipher_suites = CipherSuites,
 		     akm_suites = AKMs}, PMKIds, PMF) ->
     CipherSuitesBin = << <<X/binary>> || X <- CipherSuites >>,
+    lager:debug("AKMs: ~p", [AKMs]),
     AKMsBin = << <<(capwap_packet:encode_akm_suite(X)):32>> || X <- AKMs >>,
 
     IE0 = <<RSNVersion:16/little, GroupCipherSuite/binary,

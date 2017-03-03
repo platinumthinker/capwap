@@ -226,6 +226,7 @@ init_assoc(Event = {FrameType, _DA, _SA, BSS, 0, 0, Frame},
     State1 = assign_aid(State0),
     State2 = update_sta_from_mgmt_frame(FrameType, Frame, State1),
     State3 = aaa_association(State2),
+    lager:error("doing WTP_ADD_STATION #1"),
     State = wtp_add_station(State3),
 
     {next_state, connected, State, ?IDLE_TIMEOUT};
@@ -281,6 +282,7 @@ init_assoc(Event = {FrameType, DA, SA, BSS, 0, 0, ReqFrame},
 	      MgmtFrame/binary>>,
     wtp_send_80211(Frame, State3),
 
+    lager:error("doing WTP_ADD_STATION #4"),
     State = wtp_add_station(State3),
 
     {next_state, connected, State, ?IDLE_TIMEOUT};
@@ -320,6 +322,7 @@ init_start(Event = {'Deauthentication', _DA, _SA, BSS, 0, 0, _Frame},
 
 init_start(Event = {'Null', _DA, _SA, BSS, 0, 1, <<>>}, State0 = #state{radio_mac = BSS}) ->
     lager:debug("in INIT_START got Null: ~p", [Event]),
+    lager:error("doing WTP_ADD_STATION #2"),
     State = wtp_add_station(State0),
     {next_state, connected, State, ?IDLE_TIMEOUT};
 
@@ -367,6 +370,7 @@ connected(Event = {FrameType, _DA, _SA, BSS, 0, 0, Frame},
     %%   from the AC, the WTP MUST send a Disassociation frame to the station.
 
     State1 = update_sta_from_mgmt_frame(FrameType, Frame, State0),
+    lager:error("doing WTP_ADD_STATION #2"),
     State = wtp_add_station(State1),
     {next_state, connected, State, ?IDLE_TIMEOUT};
 
