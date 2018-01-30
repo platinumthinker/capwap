@@ -285,6 +285,7 @@ handle_event(cast, {accept, udp, Socket}, listen, Data0) ->
 
     {ok, CfgProvStateInit} = capwap_config:wtp_init_config_provider(PeerName),
     Opts = [{'Username', PeerName},
+            {'AAA-Application-Id', capwap_wtp},
 	    {'Authentication-Method', {'TLS', 'Pre-Shared-Key'}},
 	    {'Config-Provider-State', CfgProvStateInit}],
     case ergw_aaa_session:authenticate(Session, to_session(Opts)) of
@@ -1535,6 +1536,7 @@ user_lookup(psk, Username, Session) ->
     lager:debug("user_lookup: Username: ~p", [Username]),
     {ok, CfgProvStateInit} = capwap_config:wtp_init_config_provider(Username),
     Opts = [{'Username', Username},
+            {'AAA-Application-Id', capwap_wtp},
 	    {'Authentication-Method', {'TLS', 'Pre-Shared-Key'}},
 	    {'Config-Provider-State', CfgProvStateInit}],
     case ergw_aaa_session:authenticate(Session, to_session(Opts)) of
@@ -1580,6 +1582,7 @@ verify_cert_auth_cn(CommonName, Session) ->
     lager:info("AuthResult: attempt for ~p", [CommonName]),
     {ok, CfgProvStateInit} = capwap_config:wtp_init_config_provider(CommonName),
     Opts = [{'Username', CommonName},
+            {'AAA-Application-Id', capwap_wtp},
 	    {'Authentication-Method', {'TLS', 'X509-Subject-CN'}},
 	    {'Config-Provider-State', CfgProvStateInit}],
     case ergw_aaa_session:authenticate(Session, to_session(Opts)) of
